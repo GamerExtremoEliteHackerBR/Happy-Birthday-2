@@ -7,7 +7,7 @@
 
 # GamePlay 🎮 Happy Birthday 2
 <a href="https://vimeo.com/1208566478" target="_blank" rel="noopener noreferrer">
-  <img src="https://raw.githubusercontent.com/GamerExtremoEliteHackerBR/Happy-Birthday-2/main/img%20birthday/final.png" alt="Happy Birthday 2 Banner - Clique para assistir ao vídeo" width="400"/>
+  <img src="https://raw.githubusercontent.com/GamerExtremoEliteHackerBR/Happy-Birthday-2/main/img%20birthday/final.png" alt="Happy Birthday 2 Banner - Clique para assistir ao vídeo" width="200"/>
 </a>
 
 > Um jogo de sobrevivência e evolução com estilo neon e jogabilidade viciante!
