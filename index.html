@@ -1,0 +1,2321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>LEVEL 18 - DÉRYCK - EVOLUTION</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #1a3a2a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            touch-action: none;
+            transition: background 0.5s ease;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            touch-action: none;
+        }
+
+        .screen {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #0a0f2a, #020617);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ---- BOTÕES ESTILIZADOS ---- */
+        .btn {
+            background: linear-gradient(145deg, #1a2a6c, #0d1b3e);
+            border: 2px solid #4fc3f7;
+            color: white;
+            padding: 16px 48px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(79, 195, 247, 0.4);
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            backdrop-filter: blur(4px);
+            margin-top: 20px;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+            .btn:hover {
+                transform: scale(1.05);
+                background: linear-gradient(145deg, #1f3a8a, #0f2360);
+                box-shadow: 0 0 45px rgba(79, 195, 247, 0.7);
+                border-color: #81d4fa;
+            }
+
+            .btn:active {
+                transform: scale(0.97);
+            }
+
+        .btn-secondary {
+            background: linear-gradient(145deg, #2a1a3e, #1a0d2b);
+            border-color: #ce93d8;
+            box-shadow: 0 0 25px rgba(206, 147, 216, 0.3);
+            padding: 12px 36px;
+            font-size: 1.1rem;
+        }
+
+            .btn-secondary:hover {
+                background: linear-gradient(145deg, #3a2a5e, #2a1a3e);
+                box-shadow: 0 0 40px rgba(206, 147, 216, 0.6);
+                border-color: #e1bee7;
+            }
+
+        /* ---- TELA INICIAL ---- */
+        #startScreen h1 {
+            font-size: clamp(2.2rem, 10vw, 4.5rem);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            color: white;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+        }
+
+            #startScreen h1 .highlight {
+                background: linear-gradient(135deg, #fdd835, #ffb300);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                text-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+            }
+
+        .subtitle {
+            color: #b0bec5;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        /* ---- UI ---- */
+        #ui {
+            position: fixed;
+            top: 70px;
+            left: 24px;
+            z-index: 20;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #e0e0e0;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            min-width: 180px;
+        }
+
+            #ui .ui-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 2px 0;
+            }
+
+            #ui .label {
+                color: #90a4ae;
+            }
+
+            #ui .value {
+                font-weight: 700;
+            }
+
+        #xpText {
+            color: #ffd54f;
+        }
+
+        #lifeText {
+            color: #ff6b6b;
+        }
+
+        #levelText {
+            color: #4fc3f7;
+        }
+
+        #phaseText {
+            color: #81c784;
+        }
+
+        .phase-indicator {
+            position: fixed;
+            top: 70px;
+            right: 24px;
+            z-index: 20;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 10px 18px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+            .phase-indicator .phase-name {
+                font-size: 1rem;
+                font-weight: 600;
+            }
+
+            .phase-indicator .phase-progress {
+                font-size: 0.8rem;
+                color: #b0bec5;
+            }
+
+        .xp-bar-container {
+            position: fixed;
+            bottom: 55px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            width: 80%;
+            max-width: 600px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 8px 15px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+            .xp-bar-container.hidden-bar {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+                pointer-events: none;
+            }
+
+        .xp-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .xp-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd54f, #ffb300);
+            border-radius: 20px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .xp-bar-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+        }
+
+        /* ---- CONTROLES SUPERIORES ---- */
+        .top-controls {
+            position: fixed;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 30;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+            .top-controls button {
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.4rem;
+                cursor: pointer;
+                padding: 4px 8px;
+                transition: all 0.3s ease;
+                border-radius: 8px;
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+                .top-controls button:hover {
+                    transform: scale(1.15);
+                    background: rgba(255, 255, 255, 0.1);
+                }
+
+                .top-controls button:active {
+                    transform: scale(0.95);
+                }
+
+            .top-controls .volume-slider {
+                width: 80px;
+                height: 4px;
+                -webkit-appearance: none;
+                background: rgba(255, 255, 255, 0.3);
+                border-radius: 2px;
+                outline: none;
+                transition: background 0.3s;
+            }
+
+                .top-controls .volume-slider::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    width: 14px;
+                    height: 14px;
+                    border-radius: 50%;
+                    background: #4fc3f7;
+                    cursor: pointer;
+                    box-shadow: 0 0 15px rgba(79, 195, 247, 0.5);
+                }
+
+                .top-controls .volume-slider::-moz-range-thumb {
+                    width: 14px;
+                    height: 14px;
+                    border-radius: 50%;
+                    background: #4fc3f7;
+                    cursor: pointer;
+                    border: none;
+                }
+
+            .top-controls .volume-icon {
+                font-size: 1.2rem;
+            }
+
+        /* ---- BOTÃO DE TIRO (Android otimizado) ---- */
+        #shootBtn {
+            position: fixed;
+            bottom: 90px;
+            left: 30px;
+            z-index: 25;
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 152, 0, 0.7), rgba(255, 152, 0, 0.2));
+            border: 3px solid rgba(255, 152, 0, 0.9);
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 0 60px rgba(255, 152, 0, 0.3), inset 0 0 40px rgba(255, 152, 0, 0.1);
+            backdrop-filter: blur(8px);
+            transition: all 0.1s ease;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            touch-action: none;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            will-change: transform;
+        }
+
+            #shootBtn .shoot-icon {
+                font-size: 3rem;
+                line-height: 1;
+                filter: drop-shadow(0 0 20px rgba(255, 152, 0, 0.7));
+                transition: transform 0.15s ease;
+            }
+
+            #shootBtn:active {
+                transform: scale(0.85);
+                background: radial-gradient(circle at 30% 30%, rgba(255, 152, 0, 0.9), rgba(255, 152, 0, 0.3));
+                box-shadow: 0 0 80px rgba(255, 152, 0, 0.7), inset 0 0 50px rgba(255, 152, 0, 0.2);
+            }
+
+                #shootBtn:active .shoot-icon {
+                    transform: scale(1.1);
+                }
+
+            #shootBtn::before {
+                content: '';
+                position: absolute;
+                top: -12px;
+                left: -12px;
+                right: -12px;
+                bottom: -12px;
+                border-radius: 50%;
+                border: 2px solid rgba(255, 152, 0, 0.3);
+                animation: pulse-ring 1.8s ease-out infinite;
+            }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(1.35);
+                opacity: 0;
+            }
+        }
+
+        #shootBtn.shooting {
+            animation: shoot-flash 0.15s ease;
+        }
+
+        @keyframes shoot-flash {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 60px rgba(255, 152, 0, 0.3);
+            }
+
+            50% {
+                transform: scale(0.85);
+                box-shadow: 0 0 100px rgba(255, 152, 0, 0.8);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 60px rgba(255, 152, 0, 0.3);
+            }
+        }
+
+        /* ---- RODAPÉ ---- */
+        #footer {
+            position: fixed;
+            bottom: 8px;
+            left: 0;
+            right: 0;
+            z-index: 15;
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 30px rgba(0, 0, 0, 0.9), 0 2px 10px rgba(0, 0, 0, 0.8);
+            pointer-events: none;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: opacity 0.5s ease;
+        }
+
+            #footer .footer-text {
+                background: rgba(0, 0, 0, 0.5);
+                padding: 5px 20px;
+                border-radius: 25px;
+                display: inline-block;
+                backdrop-filter: blur(8px);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            }
+
+                #footer .footer-text .highlight-text {
+                    background: linear-gradient(135deg, #fdd835, #ffb300);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    font-weight: 700;
+                    text-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+                }
+
+                #footer .footer-text .emoji {
+                    -webkit-text-fill-color: initial;
+                }
+
+        /* ---- TELA DA IMAGEM ---- */
+        #imageScreen .image-container {
+            max-width: 92%;
+            max-height: 70vh;
+            border-radius: 20px;
+            border: 4px solid #4fc3f7;
+            box-shadow: 0 0 60px rgba(79, 195, 247, 0.3);
+            overflow: hidden;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+            #imageScreen .image-container.fullscreen-active {
+                max-width: 100%;
+                max-height: 100vh;
+                border-radius: 0;
+                border: none;
+                box-shadow: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                z-index: 1000;
+                cursor: default;
+            }
+
+        #finalImage {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            transition: transform 0.1s ease;
+            transform-origin: center center;
+            user-select: none;
+            background: #0a0f2a;
+        }
+
+        .image-container.fullscreen-active #finalImage {
+            cursor: grab;
+        }
+
+            .image-container.fullscreen-active #finalImage:active {
+                cursor: grabbing;
+            }
+
+        #imageScreen .close-hint {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 12px 30px;
+            border-radius: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 1.1rem;
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+
+        .image-container.fullscreen-active ~ .close-hint {
+            opacity: 1;
+        }
+
+        .zoom-controls {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            z-index: 1002;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+
+        .image-container.fullscreen-active ~ .zoom-controls {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .zoom-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .zoom-btn:hover {
+                background: rgba(255, 255, 255, 0.3);
+                transform: scale(1.1);
+            }
+
+        .zoom-reset {
+            background: rgba(79, 195, 247, 0.3);
+            border-color: #4fc3f7;
+            font-size: 1rem;
+        }
+
+        /* ---- TELA DA IMAGEM - Ajustes do botão ---- */
+        #imageScreen .btn-secondary {
+            margin-top: 8px;
+        }
+
+        #imageScreen p {
+            font-size: 1.2rem;
+            color: #b0bec5;
+            margin-top: 12px;
+            margin-bottom: 4px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 24px;
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* ---- GAME OVER ---- */
+        #gameOverScreen .game-over-title {
+            font-size: clamp(3rem, 10vw, 5rem);
+            color: #ff1744;
+            text-shadow: 0 0 60px rgba(255, 23, 68, 0.5);
+        }
+
+        /* ---- GAME OVER - Ajustes do botão ---- */
+        #gameOverScreen .btn {
+            margin-top: 8px;
+        }
+
+        #gameOverScreen p {
+            margin-bottom: 4px;
+        }
+
+        /* ---- PAUSE OVERLAY ---- */
+        #pauseOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 50;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+            #pauseOverlay.show {
+                display: flex;
+            }
+
+            #pauseOverlay h1 {
+                font-size: clamp(3rem, 8vw, 5rem);
+                color: #4fc3f7;
+                text-shadow: 0 0 60px rgba(79, 195, 247, 0.3);
+                margin-bottom: 20px;
+            }
+
+            #pauseOverlay p {
+                color: #b0bec5;
+                font-size: 1.2rem;
+            }
+
+        /* ---- RESPONSIVO ANDROID ---- */
+        @media (max-width: 600px) {
+            .btn {
+                padding: 14px 30px;
+                font-size: 1.1rem;
+                width: 80%;
+                max-width: 280px;
+            }
+
+            #ui {
+                font-size: 0.7rem;
+                padding: 5px 8px;
+                min-width: 100px;
+                top: 58px;
+                left: 6px;
+            }
+
+            .phase-indicator {
+                font-size: 0.7rem;
+                padding: 4px 8px;
+                top: 58px;
+                right: 6px;
+            }
+
+            .xp-bar-container {
+                width: 88%;
+                bottom: 48px;
+                padding: 5px 10px;
+                border-radius: 25px;
+            }
+
+            .xp-bar {
+                height: 14px;
+            }
+
+            .top-controls {
+                top: 6px;
+                padding: 5px 12px;
+                gap: 10px;
+                border-radius: 20px;
+            }
+
+                .top-controls button {
+                    font-size: 1.1rem;
+                    padding: 2px 5px;
+                }
+
+                .top-controls .volume-slider {
+                    width: 40px;
+                }
+
+                .top-controls .volume-icon {
+                    font-size: 0.9rem;
+                }
+
+            #shootBtn {
+                width: 75px;
+                height: 75px;
+                bottom: 80px;
+                left: 20px;
+            }
+
+                #shootBtn .shoot-icon {
+                    font-size: 2.5rem;
+                }
+
+                #shootBtn::before {
+                    top: -10px;
+                    left: -10px;
+                    right: -10px;
+                    bottom: -10px;
+                }
+
+            #pauseOverlay h1 {
+                font-size: 2.5rem;
+            }
+
+            .zoom-controls {
+                bottom: 80px;
+                right: 15px;
+            }
+
+            .zoom-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+            }
+
+            #footer {
+                font-size: 0.7rem;
+                bottom: 4px;
+            }
+
+                #footer .footer-text {
+                    padding: 3px 12px;
+                    border-radius: 18px;
+                }
+
+            /* Ajustes dos botões voltar em mobile */
+            #imageScreen .btn-secondary {
+                margin-top: 4px;
+                padding: 12px 28px;
+                font-size: 1rem;
+            }
+
+            #gameOverScreen .btn {
+                margin-top: 4px;
+                padding: 12px 28px;
+                font-size: 1rem;
+            }
+
+            #imageScreen p {
+                margin-top: 8px;
+                margin-bottom: 2px;
+                font-size: 1rem;
+                padding: 6px 16px;
+            }
+
+            #gameOverScreen p {
+                margin-bottom: 2px;
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            #shootBtn {
+                width: 65px;
+                height: 65px;
+                bottom: 70px;
+                left: 15px;
+            }
+
+                #shootBtn .shoot-icon {
+                    font-size: 2rem;
+                }
+
+            #ui {
+                font-size: 0.6rem;
+                padding: 4px 6px;
+                min-width: 80px;
+                top: 52px;
+                left: 4px;
+            }
+
+            .phase-indicator {
+                font-size: 0.6rem;
+                padding: 3px 6px;
+                top: 52px;
+                right: 4px;
+            }
+
+            .top-controls {
+                padding: 4px 10px;
+                gap: 6px;
+            }
+
+                .top-controls button {
+                    font-size: 0.9rem;
+                    padding: 2px 4px;
+                }
+
+                .top-controls .volume-slider {
+                    width: 30px;
+                }
+
+            .xp-bar-container {
+                bottom: 40px;
+                padding: 4px 8px;
+            }
+
+            .xp-bar {
+                height: 12px;
+            }
+
+            #footer {
+                font-size: 0.6rem;
+                bottom: 3px;
+            }
+
+                #footer .footer-text {
+                    padding: 2px 8px;
+                    border-radius: 14px;
+                }
+
+            /* Ajustes dos botões voltar em mobile pequeno */
+            #imageScreen .btn-secondary {
+                margin-top: 2px;
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+
+            #gameOverScreen .btn {
+                margin-top: 2px;
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+
+            #imageScreen p {
+                margin-top: 6px;
+                margin-bottom: 2px;
+                font-size: 0.9rem;
+                padding: 4px 12px;
+            }
+
+            #gameOverScreen p {
+                font-size: 1rem;
+            }
+        }
+
+        /* Suporte para telas muito altas (Android) */
+        @media (min-aspect-ratio: 16/9) and (max-width: 600px) {
+            #shootBtn {
+                bottom: 100px;
+                width: 80px;
+                height: 80px;
+            }
+
+                #shootBtn .shoot-icon {
+                    font-size: 2.8rem;
+                }
+
+            .xp-bar-container {
+                bottom: 55px;
+            }
+
+            #footer {
+                bottom: 6px;
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Suporte para tablets */
+        @media (min-width: 601px) and (max-width: 1024px) and (hover: none) {
+            #shootBtn {
+                width: 90px;
+                height: 90px;
+                bottom: 100px;
+                left: 35px;
+            }
+
+                #shootBtn .shoot-icon {
+                    font-size: 3.2rem;
+                }
+
+            .xp-bar-container {
+                bottom: 60px;
+            }
+
+            #footer {
+                font-size: 0.9rem;
+                bottom: 8px;
+            }
+
+                #footer .footer-text {
+                    padding: 6px 24px;
+                }
+
+            /* Ajustes dos botões voltar em tablet */
+            #imageScreen .btn-secondary {
+                margin-top: 6px;
+            }
+
+            #gameOverScreen .btn {
+                margin-top: 6px;
+            }
+        }
+
+        /* Desktop */
+        @media (min-width: 1025px) {
+            .xp-bar-container {
+                bottom: 55px;
+            }
+
+            #footer {
+                font-size: 1rem;
+                bottom: 10px;
+            }
+
+                #footer .footer-text {
+                    padding: 6px 28px;
+                }
+
+            /* Ajustes dos botões voltar em desktop */
+            #imageScreen .btn-secondary {
+                margin-top: 8px;
+            }
+
+            #gameOverScreen .btn {
+                margin-top: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TELA INICIAL -->
+    <div id="startScreen" class="screen">
+        <h1>🎮 <span class="highlight">PLAYER 1: DÉRYCK</span></h1>
+        <p class="subtitle">⚡ Evolução - 5 Fases ⚡</p>
+        <button class="btn" onclick="startGame()">🚀 INICIAR JORNADA</button>
+    </div>
+
+    <!-- TELA DE GAME OVER -->
+    <div id="gameOverScreen" class="screen hidden">
+        <h1 class="game-over-title">💀 GAME OVER</h1>
+        <p style="font-size:1.5rem;color:#b0bec5;">Você evoluiu até o nível <span id="finalLevel">0</span></p>
+        <button class="btn" onclick="backToMenu()">↩ VOLTAR AO MENU</button>
+    </div>
+
+    <!-- PAUSE OVERLAY -->
+    <div id="pauseOverlay">
+        <h1>⏸️ PAUSADO</h1>
+        <p style="color: #b0bec5; font-size: 1.2rem;">Clique em ▶️ para continuar</p>
+        <button class="btn" onclick="togglePause()" style="margin-top: 30px;">▶️ CONTINUAR</button>
+    </div>
+
+    <!-- UI -->
+    <div id="ui">
+        <div class="ui-row"><span class="label">⭐ XP:</span><span class="value" id="xpText">0/15</span></div>
+        <div class="ui-row"><span class="label">❤️ Vidas:</span><span class="value" id="lifeText">3</span></div>
+        <div class="ui-row"><span class="label">📊 Nível:</span><span class="value" id="levelText">1</span></div>
+        <div class="ui-row"><span class="label">🌍 Fase:</span><span class="value" id="phaseText">Floresta</span></div>
+    </div>
+
+    <div class="phase-indicator" id="phaseIndicator">
+        <div class="phase-name" id="phaseName">🌳 Floresta</div>
+        <div class="phase-progress" id="phaseProgress">⭐ 0/15</div>
+    </div>
+
+    <!-- BARRA DE PROGRESSO -->
+    <div class="xp-bar-container" id="xpBarContainer">
+        <div class="xp-bar">
+            <div class="xp-bar-fill" id="xpBarFill"></div>
+            <div class="xp-bar-text" id="xpBarText">0%</div>
+        </div>
+    </div>
+
+    <!-- CONTROLES SUPERIORES CENTRALIZADOS -->
+    <div class="top-controls" id="topControls">
+        <button id="soundToggleBtn" onclick="toggleAllSounds()" title="Ligar/Desligar sons">🔊</button>
+        <span class="volume-icon">🔊</span>
+        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" oninput="updateAllVolumes(this.value)">
+        <button onclick="togglePause()" title="Pausar/Continuar" style="font-size: 1.6rem;">⏸️</button>
+    </div>
+
+    <!-- BOTÃO DE TIRO (Android otimizado) -->
+    <button id="shootBtn" onmousedown="shootFromButton()" ontouchstart="shootFromButton(); event.preventDefault();">
+        <span class="shoot-icon">🔥</span>
+    </button>
+
+    <!-- RODAPÉ -->
+    <div id="footer">
+        <div class="footer-text">
+            Desenvolvido por <span class="highlight-text">Gamer Extremo</span> <span class="emoji">🎮</span> © 2026
+        </div>
+    </div>
+
+    <!-- TELA DA IMAGEM -->
+    <div id="imageScreen" class="screen hidden">
+        <div class="image-container" id="imageContainer">
+            <img id="finalImage" src="" alt="Recompensa">
+        </div>
+        <div class="close-hint">🔄 Clique na imagem para fechar</div>
+        <div class="zoom-controls">
+            <button class="zoom-btn" onclick="zoomIn()">➕</button>
+            <button class="zoom-btn" onclick="zoomOut()">➖</button>
+            <button class="zoom-btn zoom-reset" onclick="resetZoom()">⟲</button>
+        </div>
+        <p>🏆 PARABÉNS! Você completou todas as fases!</p>
+        <button class="btn btn-secondary" onclick="backToMenu()">↩ VOLTAR AO MENU</button>
+    </div>
+
+    <canvas id="game"></canvas>
+
+    <script>
+        // ============================================
+        // DETECÇÃO DE DISPOSITIVO
+        // ============================================
+        const isAndroid = /android/i.test(navigator.userAgent);
+        const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+        console.log('📱 Dispositivo:', isAndroid ? 'Android' : isMobile ? 'Mobile' : 'Desktop');
+        console.log('👆 Touch:', isTouchDevice ? 'Sim' : 'Não');
+
+        // ============================================
+        // GERADOR DE SONS POR PROGRAMAÇÃO (Web Audio API)
+        // ============================================
+        let audioContext = null;
+
+        function initAudioContext() {
+            if (!audioContext) {
+                try {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {
+                    console.warn('Web Audio API não suportada');
+                }
+            }
+            return audioContext;
+        }
+
+        function generateDamageSound() {
+            const ctx = initAudioContext();
+            if (!ctx) return null;
+
+            try {
+                const sampleRate = ctx.sampleRate;
+                const duration = 0.15;
+                const bufferLength = Math.floor(sampleRate * duration);
+                const buffer = ctx.createBuffer(1, bufferLength, sampleRate);
+                const data = buffer.getChannelData(0);
+
+                for (let i = 0; i < bufferLength; i++) {
+                    const t = i / bufferLength;
+                    const envelope = Math.exp(-t * 15) * (1 - t * 0.5);
+                    const noise = (Math.random() * 2 - 1) * envelope;
+                    const freq = 400 - t * 350;
+                    const tone = Math.sin(t * freq * Math.PI * 2) * envelope * 0.5;
+                    data[i] = (noise * 0.7 + tone * 0.3) * 0.8;
+                }
+
+                return buffer;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function generateShootSound() {
+            const ctx = initAudioContext();
+            if (!ctx) return null;
+
+            try {
+                const sampleRate = ctx.sampleRate;
+                const duration = 0.08;
+                const bufferLength = Math.floor(sampleRate * duration);
+                const buffer = ctx.createBuffer(1, bufferLength, sampleRate);
+                const data = buffer.getChannelData(0);
+
+                for (let i = 0; i < bufferLength; i++) {
+                    const t = i / bufferLength;
+                    const envelope = Math.exp(-t * 20);
+                    const freq = 800 - t * 600;
+                    const tone = Math.sin(t * freq * Math.PI * 2) * envelope;
+                    data[i] = tone * 0.6;
+                }
+
+                return buffer;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function generateCollectSound() {
+            const ctx = initAudioContext();
+            if (!ctx) return null;
+
+            try {
+                const sampleRate = ctx.sampleRate;
+                const duration = 0.12;
+                const bufferLength = Math.floor(sampleRate * duration);
+                const buffer = ctx.createBuffer(1, bufferLength, sampleRate);
+                const data = buffer.getChannelData(0);
+
+                for (let i = 0; i < bufferLength; i++) {
+                    const t = i / bufferLength;
+                    const envelope = Math.exp(-t * 10) * (1 - t * 0.3);
+                    const freq = 600 + t * 400;
+                    const tone = Math.sin(t * freq * Math.PI * 2) * envelope;
+                    data[i] = tone * 0.5;
+                }
+
+                return buffer;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function generateLevelUpSound() {
+            const ctx = initAudioContext();
+            if (!ctx) return null;
+
+            try {
+                const sampleRate = ctx.sampleRate;
+                const duration = 0.3;
+                const bufferLength = Math.floor(sampleRate * duration);
+                const buffer = ctx.createBuffer(1, bufferLength, sampleRate);
+                const data = buffer.getChannelData(0);
+
+                for (let i = 0; i < bufferLength; i++) {
+                    const t = i / bufferLength;
+                    const envelope = Math.exp(-t * 8) * (1 - t * 0.2);
+                    const freq = 500 + t * 300;
+                    const tone = Math.sin(t * freq * Math.PI * 2) * envelope;
+                    const tone2 = Math.sin(t * freq * 2 * Math.PI * 2) * envelope * 0.3;
+                    data[i] = (tone + tone2) * 0.6;
+                }
+
+                return buffer;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        // ============================================
+        // SISTEMA DE ÁUDIO
+        // ============================================
+        let allSoundsEnabled = true;
+        let globalVolume = 0.5;
+        let audioInitialized = false;
+
+        let damageBuffer = null;
+        let shootBuffer = null;
+        let collectBuffer = null;
+        let levelUpBuffer = null;
+
+        function initAudioBuffers() {
+            if (audioInitialized) return;
+
+            const ctx = initAudioContext();
+            if (!ctx) return;
+
+            damageBuffer = generateDamageSound();
+            shootBuffer = generateShootSound();
+            collectBuffer = generateCollectSound();
+            levelUpBuffer = generateLevelUpSound();
+
+            audioInitialized = true;
+            console.log('🎵 Áudios gerados com sucesso!');
+        }
+
+        function playGeneratedSound(buffer, volume = 0.7) {
+            if (!allSoundsEnabled || isPaused) return;
+            if (!buffer) return;
+
+            try {
+                const ctx = initAudioContext();
+                if (!ctx) return;
+
+                if (ctx.state === 'suspended') {
+                    ctx.resume();
+                }
+
+                const source = ctx.createBufferSource();
+                source.buffer = buffer;
+
+                const gainNode = ctx.createGain();
+                gainNode.gain.value = volume * globalVolume * 0.8;
+
+                source.connect(gainNode);
+                gainNode.connect(ctx.destination);
+                source.start(0);
+
+                setTimeout(() => {
+                    try {
+                        source.stop(0);
+                        source.disconnect();
+                        gainNode.disconnect();
+                    } catch (e) { }
+                }, 500);
+            } catch (e) { }
+        }
+
+        // ============================================
+        // MÚSICA DE FUNDO
+        // ============================================
+        const bgMusic = new Audio('F:/MyCloud/indeairmpAgmailCom/DevWeb+/060726 web/Happy Birthday 2/sounds/Retaliation_256.mp3');
+        bgMusic.loop = true;
+        bgMusic.volume = 0.3;
+        let isMusicPlaying = false;
+
+        bgMusic.addEventListener('error', function (e) {
+            console.warn('Erro ao carregar música de fundo. Tentando caminho alternativo...');
+            bgMusic.src = 'sounds/Retaliation_256.mp3';
+            bgMusic.load();
+        });
+
+        // ============================================
+        // FUNÇÕES DE CONTROLE DE ÁUDIO
+        // ============================================
+        function toggleAllSounds() {
+            const btn = document.getElementById('soundToggleBtn');
+            allSoundsEnabled = !allSoundsEnabled;
+
+            if (allSoundsEnabled) {
+                btn.textContent = '🔊';
+                if (isMusicPlaying && !isPaused) {
+                    bgMusic.play().catch(e => { });
+                }
+            } else {
+                btn.textContent = '🔇';
+                bgMusic.pause();
+            }
+        }
+
+        function updateAllVolumes(value) {
+            globalVolume = parseFloat(value);
+            bgMusic.volume = globalVolume * 0.7;
+        }
+
+        function playSound(type) {
+            if (!allSoundsEnabled || isPaused) return;
+
+            if (!audioInitialized) {
+                initAudioBuffers();
+            }
+
+            const ctx = initAudioContext();
+            if (!ctx) return;
+
+            if (ctx.state === 'suspended') {
+                ctx.resume();
+            }
+
+            switch (type) {
+                case 'damage':
+                    playGeneratedSound(damageBuffer, 0.9);
+                    break;
+                case 'shoot':
+                    playGeneratedSound(shootBuffer, 0.5);
+                    break;
+                case 'collect':
+                    playGeneratedSound(collectBuffer, 0.6);
+                    break;
+                case 'levelup':
+                    playGeneratedSound(levelUpBuffer, 0.7);
+                    break;
+            }
+        }
+
+        // ============================================
+        // SISTEMA DE PAUSE
+        // ============================================
+        let isPaused = false;
+
+        function togglePause() {
+            if (!running) return;
+
+            isPaused = !isPaused;
+            const overlay = document.getElementById('pauseOverlay');
+            const pauseBtn = document.querySelector('.top-controls button:last-child');
+
+            if (isPaused) {
+                overlay.classList.add('show');
+                pauseBtn.textContent = '▶️';
+                bgMusic.pause();
+            } else {
+                overlay.classList.remove('show');
+                pauseBtn.textContent = '⏸️';
+                if (allSoundsEnabled && isMusicPlaying) {
+                    bgMusic.play().catch(e => { });
+                }
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && running && !gameOver) {
+                togglePause();
+            }
+        });
+
+        // ============================================
+        // GERAR IMAGEM FALLBACK
+        // ============================================
+        function generateFallbackImage() {
+            const canvasImg = document.createElement('canvas');
+            canvasImg.width = 800;
+            canvasImg.height = 600;
+            const ctxImg = canvasImg.getContext('2d');
+
+            const grad = ctxImg.createRadialGradient(400, 300, 50, 400, 300, 400);
+            grad.addColorStop(0, '#1a237e');
+            grad.addColorStop(0.5, '#0d47a1');
+            grad.addColorStop(1, '#000');
+            ctxImg.fillStyle = grad;
+            ctxImg.fillRect(0, 0, 800, 600);
+
+            for (let i = 0; i < 100; i++) {
+                ctxImg.fillStyle = `rgba(255,255,255,${0.3 + Math.random() * 0.7})`;
+                ctxImg.beginPath();
+                ctxImg.arc(Math.random() * 800, Math.random() * 600, 1 + Math.random() * 2, 0, Math.PI * 2);
+                ctxImg.fill();
+            }
+
+            ctxImg.textAlign = 'center';
+            ctxImg.textBaseline = 'middle';
+            ctxImg.font = '120px Arial';
+            ctxImg.fillText('🏆', 400, 150);
+            ctxImg.font = 'bold 60px Arial';
+            ctxImg.shadowColor = 'rgba(255,215,0,0.5)';
+            ctxImg.shadowBlur = 30;
+            ctxImg.fillStyle = '#ffd700';
+            ctxImg.fillText('VITÓRIA!', 400, 280);
+            ctxImg.shadowBlur = 0;
+            ctxImg.font = '30px Arial';
+            ctxImg.fillStyle = '#4fc3f7';
+            ctxImg.fillText('⭐ Todas as fases concluídas! ⭐', 400, 340);
+            ctxImg.font = '24px Arial';
+            ctxImg.fillStyle = '#81c784';
+            const level = currentLevel || 5;
+            const label = EVOLUTION_LEVELS[level - 1]?.label || 'Lendário';
+            ctxImg.fillText(`Nível ${level} - ${label}`, 400, 390);
+            ctxImg.font = '20px Arial';
+            ctxImg.fillStyle = '#b0bec5';
+            ctxImg.fillText(`🌟 ${totalStars || 0} estrelas coletadas`, 400, 440);
+            ctxImg.strokeStyle = '#ffd700';
+            ctxImg.lineWidth = 4;
+            ctxImg.strokeRect(20, 20, 760, 560);
+
+            return canvasImg.toDataURL('image/png');
+        }
+
+        // ============================================
+        // CARREGAR IMAGEM FINAL
+        // ============================================
+        function loadFinalImage() {
+            const img = document.getElementById('finalImage');
+            img.src = 'final.png';
+            img.onerror = function () {
+                console.log('final.png não encontrado, usando imagem gerada');
+                this.onerror = null;
+                this.src = generateFallbackImage();
+            };
+            img.onload = function () {
+                console.log('final.png carregado com sucesso!');
+            };
+        }
+
+        // ============================================
+        // CONFIGURAÇÕES DO JOGO
+        // ============================================
+        const PHASES = [{
+            id: 0,
+            name: '🌳 Floresta',
+            bgColor: '#1a3a2a',
+            enemyColor: '#2e7d32',
+            enemyShape: 'triangle',
+            enemySpeed: 0.5,
+            starsNeeded: 15,
+            enemyCount: 3
+        }, {
+            id: 1,
+            name: '❄️ Neve',
+            bgColor: '#1a2a3a',
+            enemyColor: '#4fc3f7',
+            enemyShape: 'hexagon',
+            enemySpeed: 0.7,
+            starsNeeded: 15,
+            enemyCount: 4
+        }, {
+            id: 2,
+            name: '🔥 Fogo',
+            bgColor: '#3a1a0a',
+            enemyColor: '#ff6d00',
+            enemyShape: 'pentagon',
+            enemySpeed: 0.9,
+            starsNeeded: 15,
+            enemyCount: 5
+        }, {
+            id: 3,
+            name: '🌌 Espaço',
+            bgColor: '#1a0a2a',
+            enemyColor: '#7c4dff',
+            enemyShape: 'star',
+            enemySpeed: 1.1,
+            starsNeeded: 15,
+            enemyCount: 6
+        }, {
+            id: 4,
+            name: '👑 Final',
+            bgColor: '#2a1a0a',
+            enemyColor: '#ffd700',
+            enemyShape: 'octagon',
+            enemySpeed: 1.4,
+            starsNeeded: 20,
+            enemyCount: 8
+        }];
+
+        const EVOLUTION_LEVELS = [
+            { level: 1, size: 20, glow: 0, lives: 3, label: 'Iniciante' },
+            { level: 2, size: 24, glow: 10, lives: 4, label: 'Aprendiz' },
+            { level: 3, size: 28, glow: 20, lives: 5, label: 'Guerreiro' },
+            { level: 4, size: 32, glow: 30, lives: 6, label: 'Mestre' },
+            { level: 5, size: 36, glow: 40, lives: 7, label: 'Lendário' }
+        ];
+
+        // ============================================
+        // INICIALIZAÇÃO
+        // ============================================
+        const canvas = document.getElementById("game");
+        const ctx = canvas.getContext("2d");
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener("resize", resize);
+        resize();
+
+        // ============================================
+        // VARS
+        // ============================================
+        let player, xp, life, stars, enemies, particles, bullets;
+        let running = false;
+        let currentPhase = 0;
+        let currentLevel = 1;
+        let xpInPhase = 0;
+        let totalStars = 0;
+        let gameOver = false;
+        let shootCooldown = 0;
+        const SHOOT_DELAY = 8;
+
+        const xpText = document.getElementById("xpText");
+        const lifeText = document.getElementById("lifeText");
+        const levelText = document.getElementById("levelText");
+        const phaseText = document.getElementById("phaseText");
+        const phaseName = document.getElementById("phaseName");
+        const phaseProgress = document.getElementById("phaseProgress");
+        const xpBarFill = document.getElementById("xpBarFill");
+        const xpBarText = document.getElementById("xpBarText");
+        const xpBarContainer = document.getElementById("xpBarContainer");
+
+        // ============================================
+        // FUNÇÕES DO JOGO
+        // ============================================
+        function getEvolutionLevel() {
+            let evo = EVOLUTION_LEVELS[0];
+            for (let e of EVOLUTION_LEVELS) {
+                if (totalStars >= (e.level - 1) * 10) evo = e;
+            }
+            return evo;
+        }
+
+        function getPhase() {
+            return PHASES[currentPhase];
+        }
+
+        function initPhase() {
+            const phase = getPhase();
+            enemies = [];
+            stars = [];
+            bullets = [];
+            for (let i = 0; i < phase.starsNeeded; i++) spawnStar();
+            for (let i = 0; i < phase.enemyCount; i++) spawnEnemy();
+            particles = [];
+            updateUI();
+        }
+
+        function init() {
+            const phase = getPhase();
+            const evo = getEvolutionLevel();
+            player = {
+                x: canvas.width / 2 - evo.size / 2,
+                y: canvas.height / 2 - evo.size / 2,
+                size: evo.size,
+                targetX: canvas.width / 2 - evo.size / 2,
+                targetY: canvas.height / 2 - evo.size / 2
+            };
+            xp = 0;
+            xpInPhase = 0;
+            life = 3;
+            stars = [];
+            enemies = [];
+            particles = [];
+            bullets = [];
+            gameOver = false;
+            shootCooldown = 0;
+
+            initPhase();
+            updateUI();
+        }
+
+        function spawnStar() {
+            const phase = getPhase();
+            stars.push({
+                x: 30 + Math.random() * (canvas.width - 60),
+                y: 30 + Math.random() * (canvas.height - 60),
+                size: 15 + Math.random() * 10,
+                angle: 0,
+                glow: 0
+            });
+        }
+
+        function spawnEnemy() {
+            const phase = getPhase();
+            const margin = 100;
+            let x, y;
+            let attempts = 0;
+            do {
+                x = margin + Math.random() * (canvas.width - margin * 2);
+                y = margin + Math.random() * (canvas.height - margin * 2);
+                attempts++;
+            } while (Math.hypot(x - player.x, y - player.y) < 200 && attempts < 50);
+
+            enemies.push({
+                x: x,
+                y: y,
+                size: 20 + Math.random() * 10,
+                speed: phase.enemySpeed + (Math.random() - 0.5) * 0.2,
+                angle: Math.random() * Math.PI * 2,
+                phase: currentPhase,
+                hp: 1 + Math.floor(currentPhase / 2)
+            });
+        }
+
+        function spawnParticles(x, y, color, count = 20) {
+            for (let i = 0; i < count; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 1 + Math.random() * 3;
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    life: 30 + Math.random() * 30,
+                    maxLife: 60,
+                    size: 2 + Math.random() * 4,
+                    color: color
+                });
+            }
+        }
+
+        // ============================================
+        // SISTEMA DE TIRO
+        // ============================================
+        function shootNearestEnemy(fromButton = false) {
+            if (!running || gameOver || isPaused) return;
+            if (shootCooldown > 0) return;
+            if (enemies.length === 0) return;
+
+            let nearest = null;
+            let nearestDist = Infinity;
+            const cx = player.x + player.size / 2;
+            const cy = player.y + player.size / 2;
+
+            enemies.forEach(e => {
+                const dist = Math.hypot(e.x + e.size / 2 - cx, e.y + e.size / 2 - cy);
+                if (dist < nearestDist) {
+                    nearestDist = dist;
+                    nearest = e;
+                }
+            });
+
+            if (!nearest) return;
+
+            const targetX = nearest.x + nearest.size / 2;
+            const targetY = nearest.y + nearest.size / 2;
+
+            shootAt(targetX, targetY, fromButton);
+        }
+
+        function shootAt(targetX, targetY, fromButton = false) {
+            if (!running || gameOver || isPaused) return;
+            if (shootCooldown > 0) return;
+
+            const evo = getEvolutionLevel();
+            const size = evo.size;
+            const cx = player.x + size / 2;
+            const cy = player.y + size / 2;
+
+            const dx = targetX - cx;
+            const dy = targetY - cy;
+            const dist = Math.hypot(dx, dy);
+
+            if (dist < 10) return;
+
+            playSound('shoot');
+
+            if (fromButton) {
+                const btn = document.getElementById('shootBtn');
+                btn.classList.remove('shooting');
+                void btn.offsetWidth;
+                btn.classList.add('shooting');
+            }
+
+            const speed = 8;
+            const shots = Math.min(1 + Math.floor(currentLevel / 2), 5);
+            const spread = 0.2;
+
+            for (let i = 0; i < shots; i++) {
+                const angleOffset = (i - (shots - 1) / 2) * spread / shots;
+                const angle = Math.atan2(dy, dx) + angleOffset;
+                const color = fromButton ? '#ff6d00' : '#4fc3f7';
+                const glowColor = fromButton ? 'rgba(255, 109, 0, 0.5)' : 'rgba(79, 195, 247, 0.4)';
+                bullets.push({
+                    x: cx + Math.cos(angle) * 20,
+                    y: cy + Math.sin(angle) * 20,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    size: fromButton ? 6 : 5,
+                    life: 80,
+                    damage: 1,
+                    color: color,
+                    glowColor: glowColor,
+                    fromButton: fromButton
+                });
+            }
+
+            shootCooldown = SHOOT_DELAY;
+            spawnParticles(cx, cy, fromButton ? '#ff6d00' : '#4fc3f7', 3);
+        }
+
+        function shootFromButton() {
+            shootNearestEnemy(true);
+        }
+
+        // ============================================
+        // DRAW FUNCTIONS
+        // ============================================
+        function drawPlayer() {
+            const evo = getEvolutionLevel();
+            const size = evo.size;
+            const glow = evo.glow;
+
+            if (glow > 0) {
+                const gradient = ctx.createRadialGradient(
+                    player.x + size / 2, player.y + size / 2, 0,
+                    player.x + size / 2, player.y + size / 2, size * 1.5
+                );
+                gradient.addColorStop(0, `rgba(0, 255, 255, ${0.1 + glow / 200})`);
+                gradient.addColorStop(1, 'rgba(0, 255, 255, 0)');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(player.x - size, player.y - size, size * 3, size * 3);
+            }
+
+            const grad = ctx.createLinearGradient(player.x, player.y, player.x + size, player.y + size);
+            grad.addColorStop(0, '#4dd0e1');
+            grad.addColorStop(0.5, '#00bcd4');
+            grad.addColorStop(1, '#00838f');
+
+            ctx.shadowBlur = glow;
+            ctx.shadowColor = `rgba(0, 255, 255, ${glow / 80})`;
+            ctx.fillStyle = grad;
+            ctx.fillRect(player.x, player.y, size, size);
+
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.3 + glow / 100})`;
+            ctx.lineWidth = 2;
+            ctx.strokeRect(player.x, player.y, size, size);
+
+            ctx.fillStyle = 'white';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`⭐${currentLevel}`, player.x + size / 2, player.y - 8);
+
+            if (currentLevel >= 5) {
+                ctx.font = '18px Arial';
+                ctx.fillText('👑', player.x + size / 2, player.y - 30);
+            }
+        }
+
+        function drawEnemy(e) {
+            const phase = PHASES[e.phase];
+            const size = e.size;
+            ctx.save();
+            ctx.translate(e.x + size / 2, e.y + size / 2);
+            ctx.rotate(e.angle);
+
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = phase.enemyColor;
+            ctx.fillStyle = phase.enemyColor;
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+            ctx.lineWidth = 2;
+
+            ctx.beginPath();
+            const sides = getShapeSides(phase.enemyShape);
+            for (let i = 0; i < sides; i++) {
+                const angle = (i / sides) * Math.PI * 2 - Math.PI / 2;
+                const r = size / 2;
+                if (i === 0) ctx.moveTo(Math.cos(angle) * r, Math.sin(angle) * r);
+                else ctx.lineTo(Math.cos(angle) * r, Math.sin(angle) * r);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.restore();
+
+            ctx.fillStyle = 'rgba(255,255,255,0.7)';
+            ctx.font = '9px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`❤️${e.hp}`, e.x + size / 2, e.y + size + 15);
+        }
+
+        function getShapeSides(shape) {
+            switch (shape) {
+                case 'triangle': return 3;
+                case 'hexagon': return 6;
+                case 'pentagon': return 5;
+                case 'star': return 10;
+                case 'octagon': return 8;
+                default: return 4;
+            }
+        }
+
+        function drawStar(s) {
+            ctx.save();
+            ctx.translate(s.x, s.y);
+            ctx.rotate(s.angle);
+
+            const size = s.size;
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = `rgba(255, 215, 0, ${0.3 + Math.sin(s.glow) * 0.2})`;
+            ctx.fillStyle = '#ffd700';
+
+            ctx.beginPath();
+            for (let i = 0; i < 5; i++) {
+                const a = i * Math.PI * 2 / 5 - Math.PI / 2;
+                ctx.lineTo(Math.cos(a) * size, Math.sin(a) * size);
+                ctx.lineTo(Math.cos(a + Math.PI / 5) * (size * 0.4), Math.sin(a + Math.PI / 5) * (size * 0.4));
+            }
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        function drawBullet(b) {
+            ctx.save();
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = b.color;
+            ctx.fillStyle = b.color;
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, b.size, 0, Math.PI * 2);
+            ctx.fill();
+
+            const grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.size * 2.5);
+            grad.addColorStop(0, b.glowColor);
+            grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, b.size * 2.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            if (b.fromButton) {
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#ff6d00';
+                ctx.fillStyle = 'rgba(255, 109, 0, 0.3)';
+                ctx.beginPath();
+                ctx.arc(b.x - b.vx * 0.5, b.y - b.vy * 0.5, b.size * 0.8, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.restore();
+        }
+
+        function drawParticles() {
+            particles.forEach(p => {
+                const alpha = p.life / p.maxLife;
+                ctx.globalAlpha = alpha;
+                ctx.fillStyle = p.color;
+                ctx.fillRect(p.x, p.y, p.size, p.size);
+                ctx.globalAlpha = 1;
+            });
+        }
+
+        function updateParticles() {
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vx *= 0.98;
+                p.vy *= 0.98;
+                p.life--;
+            });
+            particles = particles.filter(p => p.life > 0);
+        }
+
+        function updateBullets() {
+            bullets.forEach(b => {
+                b.x += b.vx;
+                b.y += b.vy;
+                b.life--;
+            });
+            bullets = bullets.filter(b => b.life > 0 && b.x > -20 && b.x < canvas.width + 20 && b.y > -20 && b.y < canvas.height + 20);
+        }
+
+        // ============================================
+        // UPDATE
+        // ============================================
+        function update() {
+            if (!running || gameOver || isPaused) return;
+
+            const phase = getPhase();
+
+            if (shootCooldown > 0) shootCooldown--;
+
+            player.x += (player.targetX - player.x) * 0.15;
+            player.y += (player.targetY - player.y) * 0.15;
+
+            // ========== ESTRELAS ==========
+            stars = stars.filter(s => {
+                const dist = Math.hypot(player.x + player.size / 2 - s.x, player.y + player.size / 2 - s.y);
+                if (dist < player.size / 2 + s.size / 2) {
+                    xp++;
+                    xpInPhase++;
+                    totalStars++;
+                    playSound('collect');
+                    spawnParticles(s.x, s.y, '#ffd700');
+                    updateUI();
+
+                    const evo = getEvolutionLevel();
+                    if (evo.level > currentLevel) {
+                        currentLevel = evo.level;
+                        life += 1;
+                        playSound('levelup');
+                        spawnParticles(player.x + player.size / 2, player.y + player.size / 2, '#4fc3f7', 50);
+                        player.size = evo.size;
+                    }
+
+                    if (xpInPhase >= phase.starsNeeded) {
+                        playSound('levelup');
+                        spawnParticles(canvas.width / 2, canvas.height / 2, '#ffd700', 80);
+                        if (currentPhase < PHASES.length - 1) {
+                            currentPhase++;
+                            xpInPhase = 0;
+                            life += 1;
+                            setTimeout(() => {
+                                initPhase();
+                            }, 1000);
+                        } else {
+                            endGame(true);
+                        }
+                        return false;
+                    }
+
+                    if (stars.length < phase.starsNeeded * 1.5) spawnStar();
+                    return false;
+                }
+                s.angle += 0.02;
+                s.glow += 0.05;
+                return true;
+            });
+
+            // ========== BALAS ==========
+            updateBullets();
+
+            bullets.forEach(b => {
+                enemies.forEach(e => {
+                    const dist = Math.hypot(b.x - (e.x + e.size / 2), b.y - (e.y + e.size / 2));
+                    if (dist < e.size / 2 + b.size) {
+                        e.hp -= b.damage;
+
+                        playSound('damage');
+
+                        spawnParticles(b.x, b.y, '#ff6b6b', 12);
+                        b.life = 0;
+
+                        if (e.hp <= 0) {
+                            spawnParticles(e.x + e.size / 2, e.y + e.size / 2, '#ff1744', 30);
+                            xpInPhase += 1;
+                            totalStars += 1;
+                            updateUI();
+                            e.size = 0;
+                        }
+                    }
+                });
+            });
+
+            enemies = enemies.filter(e => e.size > 0);
+
+            // ========== INIMIGOS ==========
+            enemies.forEach(e => {
+                const dx = player.x + player.size / 2 - (e.x + e.size / 2);
+                const dy = player.y + player.size / 2 - (e.y + e.size / 2);
+                const dist = Math.hypot(dx, dy);
+
+                if (dist > 0) {
+                    e.x += (dx / dist) * e.speed;
+                    e.y += (dy / dist) * e.speed;
+                }
+                e.angle += 0.02;
+
+                const playerSize = player.size;
+                if (dist < playerSize / 2 + e.size / 2) {
+                    life--;
+                    spawnParticles(e.x + e.size / 2, e.y + e.size / 2, '#ff1744', 30);
+                    updateUI();
+
+                    player.x = canvas.width / 2 - playerSize / 2;
+                    player.y = canvas.height / 2 - playerSize / 2;
+                    player.targetX = player.x;
+                    player.targetY = player.y;
+
+                    enemies.forEach(en => {
+                        en.x = 100 + Math.random() * (canvas.width - 200);
+                        en.y = 100 + Math.random() * (canvas.height - 200);
+                    });
+
+                    if (life <= 0) {
+                        gameOver = true;
+                        endGame(false);
+                    }
+                }
+            });
+
+            while (enemies.length < phase.enemyCount) spawnEnemy();
+            while (stars.length < phase.starsNeeded * 1.2) spawnStar();
+
+            updateParticles();
+            updateUI();
+        }
+
+        function updateUI() {
+            const phase = getPhase();
+            const totalNeeded = phase.starsNeeded;
+
+            xpText.textContent = `${xpInPhase}/${totalNeeded}`;
+            lifeText.textContent = life;
+            levelText.textContent = currentLevel;
+            phaseText.textContent = phase.name;
+            phaseName.textContent = phase.name;
+            phaseProgress.textContent = `⭐ ${xpInPhase}/${totalNeeded}`;
+
+            const pct = Math.min((xpInPhase / totalNeeded) * 100, 100);
+            xpBarFill.style.width = pct + '%';
+            xpBarText.textContent = Math.round(pct) + '%';
+
+            document.body.style.background = phase.bgColor;
+        }
+
+        // ============================================
+        // CONTROLES - OTIMIZADOS PARA ANDROID
+        // ============================================
+        function getPos(x, y) {
+            const r = canvas.getBoundingClientRect();
+            return { x: x - r.left, y: y - r.top };
+        }
+
+        // Mouse - Desktop
+        canvas.addEventListener("mousemove", e => {
+            if (!running || gameOver || isPaused) return;
+            const p = getPos(e.clientX, e.clientY);
+            const size = player.size;
+            player.targetX = Math.max(0, Math.min(canvas.width - size, p.x - size / 2));
+            player.targetY = Math.max(0, Math.min(canvas.height - size, p.y - size / 2));
+        });
+
+        canvas.addEventListener("mousedown", e => {
+            if (e.button === 2 && running && !gameOver && !isPaused) {
+                shootNearestEnemy(false);
+            }
+        });
+
+        canvas.addEventListener("mousedown", e => {
+            if (e.button === 0 && running && !gameOver && !isPaused) {
+                if (e.target !== document.getElementById('shootBtn')) {
+                    shootNearestEnemy(false);
+                }
+            }
+        });
+
+        canvas.addEventListener("contextmenu", e => e.preventDefault());
+
+        // ============================================
+        // TOUCH - OTIMIZADO PARA ANDROID
+        // ============================================
+        let touchMoveId = null;
+        let lastTouchX = 0;
+        let lastTouchY = 0;
+        let touchVelocityX = 0;
+        let touchVelocityY = 0;
+        let isTouching = false;
+
+        canvas.addEventListener("touchstart", e => {
+            if (!running || gameOver || isPaused) return;
+            e.preventDefault();
+
+            for (let touch of e.changedTouches) {
+                const p = getPos(touch.clientX, touch.clientY);
+                const size = player.size;
+
+                if (touchMoveId === null) {
+                    touchMoveId = touch.identifier;
+                    lastTouchX = p.x;
+                    lastTouchY = p.y;
+                    isTouching = true;
+                    player.targetX = Math.max(0, Math.min(canvas.width - size, p.x - size / 2));
+                    player.targetY = Math.max(0, Math.min(canvas.height - size, p.y - size / 2));
+                }
+            }
+        }, { passive: false });
+
+        canvas.addEventListener("touchmove", e => {
+            if (!running || gameOver || isPaused) return;
+            e.preventDefault();
+
+            for (let touch of e.changedTouches) {
+                if (touch.identifier === touchMoveId) {
+                    const p = getPos(touch.clientX, touch.clientY);
+                    const size = player.size;
+
+                    touchVelocityX = (p.x - lastTouchX) * 0.3;
+                    touchVelocityY = (p.y - lastTouchY) * 0.3;
+                    lastTouchX = p.x;
+                    lastTouchY = p.y;
+
+                    player.targetX = Math.max(0, Math.min(canvas.width - size, p.x - size / 2));
+                    player.targetY = Math.max(0, Math.min(canvas.height - size, p.y - size / 2));
+                }
+            }
+        }, { passive: false });
+
+        canvas.addEventListener("touchend", e => {
+            e.preventDefault();
+            for (let touch of e.changedTouches) {
+                if (touch.identifier === touchMoveId) {
+                    touchMoveId = null;
+                    isTouching = false;
+
+                    if (Math.abs(touchVelocityX) > 0.5 || Math.abs(touchVelocityY) > 0.5) {
+                        const size = player.size;
+                        const targetX = player.targetX + touchVelocityX * 2;
+                        const targetY = player.targetY + touchVelocityY * 2;
+                        player.targetX = Math.max(0, Math.min(canvas.width - size, targetX));
+                        player.targetY = Math.max(0, Math.min(canvas.height - size, targetY));
+                    }
+                    touchVelocityX = 0;
+                    touchVelocityY = 0;
+                }
+            }
+        }, { passive: false });
+
+        canvas.addEventListener("touchcancel", e => {
+            touchMoveId = null;
+            isTouching = false;
+            touchVelocityX = 0;
+            touchVelocityY = 0;
+        });
+
+        // ============================================
+        // ZOOM DA IMAGEM
+        // ============================================
+        let isFullscreenImage = false;
+        let currentZoom = 1;
+        let panX = 0, panY = 0;
+        let isDragging = false;
+        let startX, startY, startPanX, startPanY, lastTouchDist;
+
+        const imageContainer = document.getElementById("imageContainer");
+
+        function updateTransform() {
+            finalImage.style.transform = `scale(${currentZoom}) translate(${panX}px, ${panY}px)`;
+        }
+
+        function zoomIn() {
+            if (currentZoom < 5) {
+                currentZoom += 0.2;
+                updateTransform();
+            }
+        }
+
+        function zoomOut() {
+            if (currentZoom > 0.5) {
+                currentZoom -= 0.2;
+                updateTransform();
+            }
+        }
+
+        function resetZoom() {
+            currentZoom = 1;
+            panX = 0;
+            panY = 0;
+            updateTransform();
+        }
+
+        function toggleFullscreenImage() {
+            isFullscreenImage = !isFullscreenImage;
+            if (isFullscreenImage) {
+                imageContainer.classList.add("fullscreen-active");
+                xpBarContainer.classList.add("hidden-bar");
+                resetZoom();
+                try {
+                    if (document.documentElement.requestFullscreen) {
+                        document.documentElement.requestFullscreen();
+                    }
+                } catch (e) { }
+            } else {
+                imageContainer.classList.remove("fullscreen-active");
+                xpBarContainer.classList.remove("hidden-bar");
+                resetZoom();
+                try {
+                    if (document.exitFullscreen) document.exitFullscreen();
+                } catch (e) { }
+            }
+        }
+
+        imageContainer.addEventListener("click", toggleFullscreenImage);
+
+        finalImage.addEventListener("mousedown", (e) => {
+            if (!isFullscreenImage) return;
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            startPanX = panX;
+            startPanY = panY;
+            finalImage.style.cursor = "grabbing";
+        });
+
+        window.addEventListener("mousemove", (e) => {
+            if (!isDragging || !isFullscreenImage) return;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            panX = startPanX + dx / currentZoom;
+            panY = startPanY + dy / currentZoom;
+            updateTransform();
+        });
+
+        window.addEventListener("mouseup", () => {
+            if (isDragging) {
+                isDragging = false;
+                finalImage.style.cursor = "grab";
+            }
+        });
+
+        finalImage.addEventListener("touchstart", (e) => {
+            if (!isFullscreenImage) return;
+            if (e.touches.length === 1) {
+                const touch = e.touches[0];
+                startX = touch.clientX;
+                startY = touch.clientY;
+                startPanX = panX;
+                startPanY = panY;
+                isDragging = true;
+            } else if (e.touches.length === 2) {
+                const t1 = e.touches[0];
+                const t2 = e.touches[1];
+                lastTouchDist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+            }
+        }, { passive: true });
+
+        finalImage.addEventListener("touchmove", (e) => {
+            if (!isFullscreenImage) return;
+            e.preventDefault();
+            if (e.touches.length === 1 && isDragging) {
+                const touch = e.touches[0];
+                const dx = touch.clientX - startX;
+                const dy = touch.clientY - startY;
+                panX = startPanX + dx / currentZoom;
+                panY = startPanY + dy / currentZoom;
+                updateTransform();
+            } else if (e.touches.length === 2) {
+                const t1 = e.touches[0];
+                const t2 = e.touches[1];
+                const dist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+                const delta = dist - lastTouchDist;
+                currentZoom = Math.max(0.5, Math.min(5, currentZoom + delta * 0.01));
+                lastTouchDist = dist;
+                updateTransform();
+            }
+        }, { passive: false });
+
+        finalImage.addEventListener("touchend", () => {
+            isDragging = false;
+        }, { passive: true });
+
+        finalImage.addEventListener("dragstart", (e) => e.preventDefault());
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && isFullscreenImage) {
+                isFullscreenImage = false;
+                imageContainer.classList.remove("fullscreen-active");
+                xpBarContainer.classList.remove("hidden-bar");
+                resetZoom();
+                try {
+                    if (document.exitFullscreen) document.exitFullscreen();
+                } catch (err) { }
+            }
+        });
+
+        document.addEventListener("fullscreenchange", () => {
+            if (!document.fullscreenElement) {
+                if (isFullscreenImage) {
+                    isFullscreenImage = false;
+                    imageContainer.classList.remove("fullscreen-active");
+                    xpBarContainer.classList.remove("hidden-bar");
+                    resetZoom();
+                }
+            }
+        });
+
+        // ============================================
+        // FLUXO DO JOGO
+        // ============================================
+        function startGame() {
+            document.getElementById("startScreen").classList.add("hidden");
+            document.getElementById("gameOverScreen").classList.add("hidden");
+            document.getElementById("pauseOverlay").classList.remove("show");
+            running = true;
+            isPaused = false;
+            currentPhase = 0;
+            currentLevel = 1;
+            totalStars = 0;
+            xpInPhase = 0;
+            life = 3;
+            init();
+
+            initAudioBuffers();
+
+            document.querySelector('.top-controls button:last-child').textContent = '⏸️';
+
+            if (allSoundsEnabled && !isMusicPlaying) {
+                bgMusic.play().catch(e => {
+                    console.warn('Não foi possível iniciar a música automaticamente:', e);
+                });
+                isMusicPlaying = true;
+                document.getElementById('soundToggleBtn').textContent = '🔊';
+            }
+        }
+
+        function endGame(completed) {
+            running = false;
+            bgMusic.pause();
+
+            if (completed) {
+                loadFinalImage();
+                document.getElementById("imageScreen").classList.remove("hidden");
+            } else {
+                document.getElementById("gameOverScreen").classList.remove("hidden");
+                document.getElementById("finalLevel").textContent = currentLevel;
+            }
+        }
+
+        function backToMenu() {
+            document.getElementById("gameOverScreen").classList.add("hidden");
+            document.getElementById("imageScreen").classList.add("hidden");
+            document.getElementById("pauseOverlay").classList.remove("show");
+            document.getElementById("startScreen").classList.remove("hidden");
+            running = false;
+            isPaused = false;
+            xpBarContainer.classList.remove("hidden-bar");
+
+            bgMusic.pause();
+            isMusicPlaying = false;
+            document.getElementById('soundToggleBtn').textContent = '🔊';
+
+            init();
+        }
+
+        // ============================================
+        // DRAW
+        // ============================================
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < canvas.width; x += 50) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += 50) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            drawParticles();
+            bullets.forEach(drawBullet);
+            stars.forEach(drawStar);
+            enemies.forEach(drawEnemy);
+            drawPlayer();
+        }
+
+        // ============================================
+        // LOOP
+        // ============================================
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        // Inicializa e inicia o loop
+        init();
+        loop();
+
+        // Inicializa áudio no carregamento
+        setTimeout(() => {
+            initAudioBuffers();
+        }, 100);
+
+        console.log('🎮 Jogo iniciado!');
+        console.log('📱 Modo Android otimizado!');
+        console.log('💥 O som de dano tocará quando um tiro acertar o inimigo.');
+        console.log('🔫 Botão de tiro na parte inferior esquerda.');
+        console.log('👆 Arraste o dedo para mover o player.');
+        console.log('📝 Desenvolvido por Gamer Extremo 🎮 © 2026');
+    </script>
+</body>
+</html>
