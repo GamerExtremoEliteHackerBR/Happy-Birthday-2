@@ -126,4 +126,3 @@ LinkedIn: https://www.linkedin.com/in/wanderson-m-p-294962203/
 ⭐ Divirta-se e compartilhe! ⭐
 
 
-# Happy-Birthday-2
