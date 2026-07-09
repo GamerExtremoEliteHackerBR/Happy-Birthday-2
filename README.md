@@ -90,9 +90,6 @@ cd happy-birthday-2
 open index.html
 
 
-
-
-
 🎮 Controles
 Ação	PC	Mobile
 Mover	Mouse	Arraste o dedo
