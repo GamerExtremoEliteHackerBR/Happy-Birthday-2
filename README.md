@@ -114,6 +114,7 @@ Colete estrelas, evolua seu personagem e complete todas as 5 fases para conquist
 🎨 Capturas de Tela
 Tela Inicial	Gameplay	Vitória
 https://via.placeholder.com/200x150/0a0f2a/4fc3f7?text=Tela+Inicial	https://via.placeholder.com/200x150/0a0f2a/4fc3f7?text=Gameplay	https://via.placeholder.com/200x150/0a0f2a/4fc3f7?text=Vit%C3%B3ria
+<img src="https://raw.githubusercontent.com/GamerExtremoEliteHackerBR/Happy-Birthday-2/main/img%20birthday/final.png" alt="Happy Birthday 2 Banner" width="400"/>
 🤝 Contribuição
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou pull requests.
 
